@@ -1,0 +1,72 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.mainWindow {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.notifications {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.messageWindow {
+  min-width: 100px;
+  border-radius: 10px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.735);
+  color: white;
+}
+
+form {
+  width: 40%;
+  border-radius: 15px;
+  border: 2px solid black;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+}
+
+form > input {
+  border: 2px solid black;
+}
+
+button,
+form > input {
+  width: 300px;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+form > input[type='submit'],
+button {
+  font-weight: 900;
+  background-color: rgb(93, 182, 226);
+  color: white;
+  border: none;
+}
+
+.hideMessage {
+  display: none;
+}
