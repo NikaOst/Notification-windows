@@ -23,7 +23,7 @@ let notificationArray = JSON.parse(localStorage.getItem('notificationArray')) ||
 function renderNotification(id, icon, title, content, type) {
   const messageWindow = document.createElement('div');
   messageWindow.innerHTML = `
-    <i id="${id}" class="fa-solid fa-xmark close-btn"></i>
+    <i id="${id}" class="fa-solid fa-xmark closeBtn"></i>
     <div>
     ${icon}
     <div>
@@ -32,11 +32,15 @@ function renderNotification(id, icon, title, content, type) {
     </div></div>
     `;
   messageWindow.classList.add('messageWindow');
+  // сначала отрисует сообщение (за границей), а потом покажет его, дав анимацию
+  requestAnimationFrame(() => {
+    messageWindow.classList.add('showMessage');
+  });
   messageWindow.style.backgroundColor =
     type === 'waitingConformation' ? 'rgb(105, 194, 83)' : 'rgb(216, 177, 73)';
   notifications.append(messageWindow);
 
-  const closeBtn = messageWindow.querySelector('.close-btn');
+  const closeBtn = messageWindow.querySelector('.closeBtn');
   closeBtn.addEventListener('click', () => {
     Notification.closeMessageBox(id);
   });
@@ -65,7 +69,17 @@ class Notification {
     const closeBtn = document.querySelector(`[id="${messageWindowId}"]`);
     if (closeBtn) {
       const messageWindow = closeBtn.closest('.messageWindow');
+      // дать сначала анимацию закрытия, а потом удалить из дома элемент
+      messageWindow.classList.remove('showMessage');
       messageWindow.classList.add('hideMessage');
+      messageWindow.addEventListener(
+        'transitionend',
+        () => {
+          messageWindow.remove();
+        },
+        // чтобы сработал только один раз
+        { once: true },
+      );
     }
     notificationArray = notificationArray.filter((message) => {
       return Number(message.id) !== Number(messageWindowId);

@@ -29,9 +29,22 @@
   padding: 15px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.735);
   color: white;
+  transform: translateX(120%);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
-.close-btn {
+.messageWindow.showMessage {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.messageWindow.hideMessage {
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+.closeBtn {
   margin-left: auto;
   cursor: pointer;
 }
@@ -75,8 +88,4 @@ button {
   background-color: rgb(93, 182, 226);
   color: white;
   border: none;
-}
-
-.hideMessage {
-  display: none;
 }
