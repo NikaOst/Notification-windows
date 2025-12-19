@@ -18,31 +18,59 @@
 const form = document.querySelector('form');
 const mainWindow = document.querySelector('.mainWindow');
 const notifications = document.querySelector('.notifications');
+let notificationArray = JSON.parse(localStorage.getItem('notificationArray')) || [];
+
+function renderNotification(id, icon, title, content, type) {
+  const messageWindow = document.createElement('div');
+  messageWindow.innerHTML = `
+    <i id="${id}" class="fa-solid fa-xmark close-btn"></i>
+    <div>
+    ${icon}
+    <div>
+    <p class='messageTitle'>${title}</p>
+    <p class='messageContent'>${content}</p>
+    </div></div>
+    `;
+  messageWindow.classList.add('messageWindow');
+  messageWindow.style.backgroundColor =
+    type === 'waitingConformation' ? 'rgb(105, 194, 83)' : 'rgb(216, 177, 73)';
+  notifications.append(messageWindow);
+
+  const closeBtn = messageWindow.querySelector('.close-btn');
+  closeBtn.addEventListener('click', () => {
+    Notification.closeMessageBox(id);
+  });
+}
 
 class Notification {
-  constructor(id, title, content, icon, type) {
-    this.id = id;
+  constructor(title, content, icon, type) {
+    this.id = Math.floor(Math.random() * 1000000000);
     this.title = title;
     this.content = content;
     this.icon = icon;
     this.type = type;
   }
   createNotification() {
-    const messageWindow = document.createElement('div');
-    messageWindow.innerHTML = `
-    ${this.icon}
-    <div>
-    <p class='messageTitle'>${this.title}</p>
-    <p class='messageContent'>${this.content}</p>
-    </div>
-    `;
-    messageWindow.classList.add('messageWindow');
-    messageWindow.style.backgroundColor =
-      this.type === 'waitingConformation' ? 'rgb(105, 194, 83)' : 'rgb(216, 177, 73)';
-    notifications.append(messageWindow);
+    notificationArray.push({
+      id: this.id,
+      title: this.title,
+      content: this.content,
+      icon: this.icon,
+      type: this.type,
+    });
+    localStorage.setItem('notificationArray', JSON.stringify(notificationArray));
+    renderNotification(this.id, this.icon, this.title, this.content, this.type);
   }
-  closeMessageBox(messageWindow) {
-    messageWindow.classList.add('hideMessage');
+  static closeMessageBox(messageWindowId) {
+    const closeBtn = document.querySelector(`[id="${messageWindowId}"]`);
+    if (closeBtn) {
+      const messageWindow = closeBtn.closest('.messageWindow');
+      messageWindow.classList.add('hideMessage');
+    }
+    notificationArray = notificationArray.filter((message) => {
+      return Number(message.id) !== Number(messageWindowId);
+    });
+    localStorage.setItem('notificationArray', JSON.stringify(notificationArray));
   }
 }
 
@@ -63,7 +91,6 @@ function createButtons() {
 
   buttonOrderPaid.addEventListener('click', () => {
     const notification = new Notification(
-      Math.floor(Math.random() * 1000000000),
       'Заказ оплачен',
       'Ожидайте отправку',
       '<i class="fa-solid fa-check"></i>',
@@ -73,7 +100,6 @@ function createButtons() {
   });
   buttonOrderSent.addEventListener('click', () => {
     const notification = new Notification(
-      Math.floor(Math.random() * 1000000000),
       'Заказ отправлен',
       'Ожидайте курьера',
       '<i class="fa-solid fa-check"></i>',
@@ -83,7 +109,6 @@ function createButtons() {
   });
   buttonOrderReceived.addEventListener('click', () => {
     const notification = new Notification(
-      Math.floor(Math.random() * 1000000000),
       'Заказ получен',
       'Ждем вас снова!',
       '<i class="fa-solid fa-check"></i>',
@@ -96,12 +121,18 @@ function createButtons() {
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   const notification = new Notification(
-    Math.floor(Math.random() * 1000000000),
     'Заказ создан',
     'Ожидайте дальнейшей информации',
     '<i class="fa-solid fa-check"></i>',
     'waitingConformation',
   );
   notification.createNotification();
-  createButtons();
+  const allButtons = document.querySelector('button');
+  if (!allButtons) createButtons();
+});
+
+window.addEventListener('load', () => {
+  notificationArray.forEach((message) => {
+    renderNotification(message.id, message.icon, message.title, message.content, message.type);
+  });
 });

@@ -25,15 +25,25 @@
   min-width: 100px;
   border-radius: 10px;
   display: flex;
-  gap: 20px;
-  align-items: center;
-  padding: 10px;
+  flex-direction: column;
+  padding: 15px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.735);
   color: white;
 }
 
+.close-btn {
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.messageWindow > div {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
 form {
-  width: 40%;
+  width: 350px;
   border-radius: 15px;
   border: 2px solid black;
   display: flex;
